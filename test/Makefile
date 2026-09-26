@@ -22,6 +22,12 @@ r2r-tests: bins
 fuzz-tests: bins
 	r2r -LF bins/fuzzed @fuzz
 
+scripts/r2k_mock.so: scripts/r2k_mock.c ../libr/io/p/io_r2k_linux.h
+	$(CC) -shared -fPIC -I../libr/include -I../subprojects/sdb/include -o $@ $< -ldl
+
+r2k: scripts/r2k_mock.so
+	cd .. && LD_PRELOAD=$(CURDIR)/scripts/r2k_mock.so r2r -u -L -C test db/extras/io/r2k
+
 keystone: bins
 	${RUNTEST} db/extras/asm/x86.ks_*
 
@@ -52,6 +58,7 @@ vc4: bins
 clean:
 	$(MAKE) -C unit clean
 	rm -rf tmp
+	rm -f scripts/r2k_mock.so
 	$(MAKE) -C indent clean
 
 indent-check:
@@ -81,4 +88,4 @@ unit unit-tests: bins
 	PATH="$(BINDIR):$(PATH)" \
 		$(MAKE) -C unit run
 
-.PHONY: all clean unit install uninstall r2r-tests fuzz-tests keystone swf dwarf yara unit-tests indent-check
+.PHONY: all clean unit install uninstall r2r-tests r2k fuzz-tests keystone swf dwarf yara unit-tests indent-check

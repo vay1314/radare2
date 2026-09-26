@@ -17,6 +17,10 @@ Originally based on work by and now in collaboration with pancake.
  * r2pipe tests require Python and r2pipe (in CI uses python3 and r2pipe from git, but users may be good with latests releases)
  * Valgrind (optional).
 
+On 64-bit Linux, `make -C test r2k` runs the r2k command regressions with a
+mock ioctl driver after building and installing radare2. It requires a C
+compiler and does not load a kernel module or access kernel memory.
+
 # Usage
 
  * To run *all* tests, use `make -k all`.
